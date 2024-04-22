@@ -1,0 +1,3 @@
+celery -A cyberfusion.celery worker -l info
+python3 manage.py runserver
+

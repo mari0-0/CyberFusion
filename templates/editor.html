@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block banner %}{%endblock%}
+{% block title %}Editor | CyberFusion{%endblock%}
+{%block active-home%}{%endblock%}
+{%block scriptshead%}
+    <style>
+
+    </style>
+{%endblock%}
+{%block main%}
+<section class="cyber-security-section accordian-section faq-page overflow-hidden">
+    <div class="container">
+        <div class="row">
+            <form id="myForm" action="" method="post" style="display: flex;">
+                {% csrf_token %} 
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                {%if username%}
+                <h2 class="text-center text-white">Usernames</h2>
+                {%else%}
+                <h2 class="text-center text-white">Passwords</h2>
+                {%endif%}
+                <div style="display: flex; justify-content: center; align-items: center; margin-top: 5rem;">
+                    {{ form1.media }}
+                    {{ form1.body }}
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 mt-5" style="display: flex; justify-content: center; align-items: center;">
+                <div class="banner-btn discover-btn-banner ">
+                    <a href="#start-now" onclick="document.getElementById('myForm').submit(); return false;" 
+                    class="text-decoration-none">Submit <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</section>
+{%endblock%}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{%block scriptshead%}
+<script src="https://cdn.jsdelivr.net/npm/jquery"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/jquery.terminal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.terminal/css/jquery.terminal.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
+<title>Terminal | CyberFusion</title>
+{%endblock%}
+{%block head%}{%endblock%}
+{%block banner%}{%endblock%}
+{%block navbar%}{%endblock%}
+{%block main%}{%endblock%}
+{%block footer%}{%endblock%}
+{%block scripts%}
+<script>
+    function command(cmd) {
+        if (cmd == "mv"){
+        return function(arg1, arg2){
+            console.log(cmd+" "+arg1);
+            fetch(`/save_command/?command=${cmd+" "+ arg1 +" "+ arg2}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(error => {
+                    // Handle error
+                    console.error('Error sending POST request:', error);
+                });
+        }}
+        if (cmd == "mkdir" || cmd == "echo" || cmd == "rm" || cmd == "cd"){
+        return function(arg){
+            if(cmd == "rm"){ cmd = cmd + " -rf"}
+            console.log(cmd+" "+arg);
+            fetch(`/save_command/?command=${cmd+" "+arg}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(error => {
+                    // Handle error
+                    console.error('Error sending POST request:', error);
+                });
+        }}
+        return function(){
+            fetch(`/save_command/?command=${cmd}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(error => {
+                    // Handle error
+                    console.error('Error sending POST request:', error);
+                });
+        }
+    }
+
+    term = $('body').terminal({
+        ls: command('ls'),
+        cd: command('cd'),
+        rm: command('rm'),
+        mv: command('mv'),
+        mkdir : command('mkdir'),
+        echo : command('echo'),
+        whoami: command('whoami'),
+        bye: command('bye'),
+    }, {
+        greetings: ''
+
+    });
+
+    function fetchData() {
+        fetch('/get_output')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data['output'] !== 'ErrorNoOutput') {
+                    term.echo(data['output'])
+                    console.log(data['output']);
+                }
+            })
+    }
+
+    // Run the fetchData function every 2 seconds
+    setInterval(fetchData, 500); 
+
+</script>
+{%endblock%}
